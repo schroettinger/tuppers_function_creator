@@ -19,3 +19,5 @@ Links:
 <https://tuppers-formula.ovh>
 
 <https://keelyhill.github.io/tuppers-formula/>
+
+<https://stackoverflow.com/questions/28200366/python-3-x-importerror-no-module-named-cstringio>
