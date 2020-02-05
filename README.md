@@ -1,6 +1,6 @@
 # Tuppers function plotter
 
-Goal of this small strip of code is to convert an string input into a constant value in order to plot it via the <https://en.wikipedia.org/wiki/Tupper%27s_self-referential_formulav> 
+Goal of this small strip of code is to convert an string input into a constant value in order to plot it via the <https://en.wikipedia.org/wiki/Tupper%27s_self-referential_formula> 
 
 Links:
 
