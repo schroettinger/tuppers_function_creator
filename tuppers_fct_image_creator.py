@@ -7,8 +7,8 @@ from PIL import ImageDraw
 from io import BytesIO
 
 BMPHEADERSIZE = 54
-BMPLIMITLINE = 318
-BMPLIMITLINE_WITHPADDING = 320
+BMPLIMITLINE = 318*3
+BMPLIMITLINE_WITHPADDING = 320*3
 #Get a string
 print("Input some string!")
 inputstring = "Daniel" #input()
@@ -33,25 +33,31 @@ outputstring = ""
 temp =""
 skipheadercounter = 0
 gothroughline = 0
-set = False
+i =0;
 for a in array: #our bmp has 5494 bytes
+    i=i+1
     if (skipheadercounter > BMPHEADERSIZE): #use only the payload of 5440B
+        print(str(a))
 
-    # 5440 / 17 = 320;  106 Pixel with 24bit (=3Byte) will have 318 Byte; difference of two has to be skipped
-        if(gothroughline < BMPLIMITLINE) & set == False:
-            temp += str(hex(a))
+        gothroughline = gothroughline + 1
+        # 5440 / 17 = 320;  106 Pixel with 24bit (=3Byte) will have 318 Byte; difference of two has to be skipped
+        if(gothroughline < BMPLIMITLINE) & (gothroughline % 3 == 0): #check each 3rd becasue of 24bit color depth. As we are only using one byte as identification this should work
+
             if a == 255:
                 outputstring += "0"
+                temp += "0"
             else:
                 outputstring += "1"
-            set = True
-        gothroughline = gothroughline + 3 #check each 3rd becasue of 24bit color depth. As we are only using one byte as identification this should work
+                temp += "1"
+
         if(gothroughline >= BMPLIMITLINE_WITHPADDING):
             gothroughline = 0
+            print(temp)
+            temp = ""
     else:
         skipheadercounter = skipheadercounter + 1 #skip theBMP Header but stop when limit reached
 
-# print(temp)
+
 print(outputstring)
 
 #img.save('input.bmp')
