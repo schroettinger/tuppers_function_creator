@@ -1,70 +1,52 @@
 from PIL import Image
 from PIL import ImageDraw
-# from PIL import ImageFont
-# import numpy as np
-#Python2:
-#import cStringIO
-from io import BytesIO
+import webbrowser
 
-BMPHEADERSIZE = 54
-BMPLIMITLINE = 318*3
-BMPLIMITLINE_WITHPADDING = 320*3
-#Get a string
+#Defines
+TUPPERS_X = 106  # The maximal x axis or the tupper's funtion is 106
+TUPPERS_Y = 17  # teh amximal Y axis for tupper's function is 17
+ROTATEANGLE = 90
+URL = "https://tuppers-formula.ovh/#"
+
+# Get a string
 print("Input some string!")
-inputstring = "Daniel" #input()
+inputstring = input() # A maximum stringlength is not implemented until now
 
-#Create a image and plot the input
-img = Image.new('RGB', (BMPLIMITLINE, 17), (255, 255, 255))
-d = ImageDraw.Draw(img)
-d.text((0, 0), inputstring, fill=(0, 0, 0))
+# Create a image and plot the input
+img = Image.new('RGB', (TUPPERS_X, TUPPERS_Y), (255, 255, 255))
+d = ImageDraw.Draw(img) #create a draw element to adding something to the image
+d.text((0, 0), inputstring, fill=(0, 0, 0)) # Insert our string
+size = TUPPERS_Y, TUPPERS_X #define size for rotate function
+img = img.rotate(ROTATEANGLE, expand=1).resize(size) #resize the picture to be vertical instead of horizontal
 
-#Save the picture of the input in the memory
-#Python2:
-#s = cStringIO.StringIO()
-s = BytesIO()
-img.save(s, 'bmp')
-
-#Get the - converted - image back and store it in an array
-in_memory_file = s.getvalue() #210b size, 24bit, 106x17
-array = in_memory_file
-
-
+# Define a black and a white pixel - more we don't need and other colors are also not defined by us
+pixel_black = (0, 0, 0)
+pixel_white = (255, 255, 255)
 outputstring = ""
-temp =""
-skipheadercounter = 0
-gothroughline = 0
-i =0;
-for a in array: #our bmp has 5494 bytes
-    i=i+1
-    if (skipheadercounter > BMPHEADERSIZE): #use only the payload of 5440B
-        print(str(a))
 
-        gothroughline = gothroughline + 1
-        # 5440 / 17 = 320;  106 Pixel with 24bit (=3Byte) will have 318 Byte; difference of two has to be skipped
-        if(gothroughline < BMPLIMITLINE) & (gothroughline % 3 == 0): #check each 3rd becasue of 24bit color depth. As we are only using one byte as identification this should work
+#loading only the needed pixels from the picture into pixels - without header or padding or something
+pixels = img.load()
 
-            if a == 255:
-                outputstring += "0"
-                temp += "0"
-            else:
-                outputstring += "1"
-                temp += "1"
+#this will step through the imape's pixels starting in the top upper left, going to the right and then into the next line
+#until it ends up in the lower right corner
+for y in range(TUPPERS_X): #y for TUPPERS_X because of rotation
+    for x in range(TUPPERS_Y): #x for TUPPERS_Y because of rotation
 
-        if(gothroughline >= BMPLIMITLINE_WITHPADDING):
-            gothroughline = 0
-            print(temp)
-            temp = ""
-    else:
-        skipheadercounter = skipheadercounter + 1 #skip theBMP Header but stop when limit reached
+        #print(pixels[x, y]) #for debug only
+        if(pixels[x, y] == pixel_black):
+            outputstring = outputstring + "1"
 
+        if (pixels[x, y] == pixel_white):
+            outputstring = outputstring + "0"
 
-print(outputstring)
+# Calculations for k:
+#print(outputstring)
+#print(int(outputstring))
+outputstringAsNumber = int(outputstring, 2)
+k = outputstringAsNumber *17
 
-#img.save('input.bmp')
+print("k to text \"" + inputstring + "\" is:")
+print(k)
 
-
-
-
-
-
-
+#Show it at the Webbrowser
+webbrowser.open_new_tab(URL+str(k))
